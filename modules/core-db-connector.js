@@ -7,7 +7,7 @@ if (process.env.mongoURL) {
         useUnifiedTopology: true
     });
 
-    const db = mongoose.connection;
+    var db = mongoose.connection;
 
     db.on('error', console.error.bind(console, 'mlab connection error:'));
     db.once('open', function () {
