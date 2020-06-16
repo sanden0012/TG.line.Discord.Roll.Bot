@@ -6,31 +6,39 @@ try {
         save: ''
     };
     const records = require('../modules/records.js');
-    records.get('trpgCommand', (msgs) => {
-        rply.trpgCommandfunction = msgs
-    })
 
-    gameName = function () {
+
+    var gameName = function () {
         return '(公測中)儲存角色卡功能 .ch (add del show 自定關鍵字)'
     }
-    gameType = function () {
+    var gameType = function () {
         return 'trpgcharacter:hktrpg'
     }
-    prefixs = function () {
+    var prefixs = function () {
         return [/(^[.]char$)/ig, ]
     }
     /*
 
-.ch add 的輸入格式,用來增建角色卡
-.ch add name[Sad]
-state[HP:5 5;MP:3 3;SAN:50 99;護甲:6;]
-notes[筆記:SAD;心靈支柱: 特質]
+.char add 的輸入格式,用來增建角色卡
+.char add name[Sad]
+state[HP:5/5;MP:3/3;SAN:50/99;護甲:6;]
 roll[投擲:cc 80 投擲;空手 cc 50;]
+notes[筆記:SAD;心靈支柱: 特質]
 
 // state 可以進行增減
 // notes 文字筆記
 // roll 擲骰指令
+
+如果沒有名字 會更新修正正在USE的角色卡
+但沒有的話,  就會出錯
 ============
+
+===
+.char use 使用角色卡
+.ch use sad
+會自動使用名叫Sad 的角色卡
+====
+
 顯示SHOW 功能:
 
 .ch show (顯示 名字 state 和roll) 
@@ -44,8 +52,8 @@ HP: 5/5 MP: 3/3 SAN: 50/90 護甲: 6
 筆記: SAD
 心靈支柱: 特質
 -------
-投擲 cc 80 投擲 
-空手 cc 50
+投擲: cc 80 投擲 
+空手: cc 50
 ======
 
 功能 使用角色卡的state 和notes
@@ -62,10 +70,15 @@ HP 5/5 MP 3/3
 .ch set HP  10 20 直接把現在值變成10 最大值變成20
 .ch set HP  . 20 直接把現在值變成空白 最大值變成20
 
-.ch 輸出指令 cc 80 投擲 
-在指令中可以加上 +{HP} -{san} 
+============
+.ch 輸出指令
+.ch  投擲
+cc 80 投擲 
+在指令中可以加上 +{HP} -{san}  (X)
 在結果中會進行運算。
-===
+
+
+======
 
 */
 
