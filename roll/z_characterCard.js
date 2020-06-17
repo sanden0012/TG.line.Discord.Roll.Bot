@@ -13,9 +13,9 @@ try {
         return 'trpgcharacter:hktrpg'
     }
     var prefixs = function () {
-        return [/(^[.]char$)/ig, ]
+        return [/(^[.]char$)|(^[.]ch$)/ig, ]
     }
-    const add = 
+    const add = new RegExp();
     /*
     
 
@@ -96,11 +96,12 @@ cc 80 投擲
     \n 輸入.ch  (關鍵字) 即可執行 \
     \n "
     }
-    initialize = function () {
+
+    var initialize = function () {
         return rply;
     }
 
-    rollDiceCommand = function (inputStr, mainMsg, groupid, userid, userrole, botname, displayname, channelid) {
+    var rollDiceCommand = function (inputStr, mainMsg, groupid, userid, userrole, botname, displayname, channelid) {
 
         rply.text = '';
         switch (true) {
@@ -112,12 +113,12 @@ cc 80 投擲
                 //console.log('mainMsg: ', mainMsg)
                 //增加資料庫
                 //檢查有沒有重覆
-    
+
                 return rply;
 
             case /(^[.]ch$)/i.test(mainMsg[0]) && /^del$/i.test(mainMsg[1]) && /^all$/i.test(mainMsg[2]):
                 //刪除資料庫
-           
+
 
                 return rply;
             case /(^[.]ch$)/i.test(mainMsg[0]) && /^del$/i.test(mainMsg[1]) && /^\d+$/i.test(mainMsg[2]):
@@ -126,7 +127,7 @@ cc 80 投擲
 
             case /(^[.]ch$)/i.test(mainMsg[0]) && /^show$/i.test(mainMsg[1]):
                 //顯示
-     
+
                 //顯示資料庫
                 rply.text = rply.text.replace(/^([^(,)\1]*?)\s*(,)\s*/mg, '$1: ').replace(/\,/gm, ', ')
                 return rply
@@ -136,7 +137,7 @@ cc 80 投擲
                 //if (times > 30) times = 30;
                 //if (times < 1) times = 1
                 //console.log(times)
-     
+
                 return rply;
 
             default:
