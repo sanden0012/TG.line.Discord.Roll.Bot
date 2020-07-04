@@ -252,16 +252,7 @@ if (process.env.LINE_CHANNEL_ACCESSTOKEN) {
 			}
 			async function replyMessagebyReplyToken(targetid, Reply) {
 				let temp = await HandleMessage(Reply);
-				return await client.replyMessage(event.replyToken, temp).catch((err) => {
-					if (temp.type == 'image') {
-						let tempB = {
-							type: 'text',
-							text: temp.originalContentUrl
-						};
-						client.replyMessage(event.replyToken, tempB);
-						//	}
-					};
-				});
+				return await client.replyMessage(event.replyToken, temp)
 			};
 
 			/**pushMessage
