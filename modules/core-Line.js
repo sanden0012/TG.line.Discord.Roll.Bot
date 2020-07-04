@@ -263,47 +263,7 @@ if (process.env.LINE_CHANNEL_ACCESSTOKEN) {
 					};
 				});
 			};
-			async function HandleMessage(message) {
-				let temp = [];
-				switch (true) {
-					case message.type == 'text' && message.text != '':
-						for (var i = 0; i < message.text.toString().match(/[\s\S]{1,1900}/g).length; i++) {
-							if (i == 0 || i == 1 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 1)
-								temp.push({
-									type: 'text',
-									text: message.text.toString().match(/[\s\S]{1,1900}/g)[i]
-								})
-						}
-						return temp;
-					case message.type == 'image' && message.text != '':
-						return {
-							"type": "image",
-							"originalContentUrl": message.text.replace('http://', 'https://'),
-								"previewImageUrl": message.text.replace('http://', 'https://')
-						};
 
-					case typeof message == 'string' || message instanceof String:
-						for (var i = 0; i < message.toString().match(/[\s\S]{1,1900}/g).length; i++) {
-							if (i == 0 || i == 1 || i == message.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.toString().match(/[\s\S]{1,1900}/g).length - 1)
-								temp.push({
-									type: 'text',
-									text: message.toString().match(/[\s\S]{1,1900}/g)[i]
-								});
-						};
-						return temp;
-					case message.text != '':
-						for (var i = 0; i < message.text.toString().match(/[\s\S]{1,1900}/g).length; i++) {
-							if (i == 0 || i == 1 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 1)
-								temp.push({
-									type: 'text',
-									text: message.text.toString().match(/[\s\S]{1,1900}/g)[i]
-								})
-						}
-						return temp;
-					default:
-						break;
-				}
-			};
 			/**pushMessage
 			 * client.pushImage(USER_ID, {
 				  originalContentUrl: 'https://example.com/original.jpg',
@@ -336,13 +296,55 @@ if (process.env.LINE_CHANNEL_ACCESSTOKEN) {
 		// Will print "unhandledRejection err is not defined"
 		console.log('unhandledRejection: ', error.message);
 	});
+
+
 	module.exports = {
 		app,
 		express
 	};
 
 };
+async function HandleMessage(message) {
+	let temp = [];
+	switch (true) {
+		case message.type == 'text' && message.text != '':
+			for (var i = 0; i < message.text.toString().match(/[\s\S]{1,1900}/g).length; i++) {
+				if (i == 0 || i == 1 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 1)
+					temp.push({
+						type: 'text',
+						text: message.text.toString().match(/[\s\S]{1,1900}/g)[i]
+					})
+			}
+			return temp;
+		case message.type == 'image' && message.text != '':
+			return {
+				"type": "image",
+				"originalContentUrl": message.text.replace('http://', 'https://'),
+					"previewImageUrl": message.text.replace('http://', 'https://')
+			};
 
+		case typeof message == 'string' || message instanceof String:
+			for (var i = 0; i < message.toString().match(/[\s\S]{1,1900}/g).length; i++) {
+				if (i == 0 || i == 1 || i == message.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.toString().match(/[\s\S]{1,1900}/g).length - 1)
+					temp.push({
+						type: 'text',
+						text: message.toString().match(/[\s\S]{1,1900}/g)[i]
+					});
+			};
+			return temp;
+		case message.text != '':
+			for (var i = 0; i < message.text.toString().match(/[\s\S]{1,1900}/g).length; i++) {
+				if (i == 0 || i == 1 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 2 || i == message.text.toString().match(/[\s\S]{1,1900}/g).length - 1)
+					temp.push({
+						type: 'text',
+						text: message.text.toString().match(/[\s\S]{1,1900}/g)[i]
+					})
+			}
+			return temp;
+		default:
+			break;
+	}
+};
 
 /*
 	return {
