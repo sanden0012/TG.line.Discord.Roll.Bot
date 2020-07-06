@@ -136,9 +136,6 @@ var parseInput = async function (inputStr, groupid, userid, userrole, botname, d
 }
 
 async function courtMessage(result, botname, inputStr) {
-	let doc = await schema.RealTimeRollingLog.findOne({});
-	console.log('doc:', doc)
-	let target = {};
 	if (result && result.text) {
 		//SAVE THE LOG
 		switch (botname) {
@@ -175,8 +172,6 @@ async function courtMessage(result, botname, inputStr) {
 			default:
 				break;
 		}
-		simpleCourt++;
-		//await saveLog();
 
 	} else {
 		switch (botname) {
@@ -208,40 +203,11 @@ async function courtMessage(result, botname, inputStr) {
 			default:
 				break;
 		}
-		//simpleCourt++;
-
 	}
-
-
-	//await doc.save();
-	//	await saveLog();
 	return null;
 }
 
-async function logSum(target) {
-	let consoleLog = {}
-	try {
-		consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
-				$inc: target
-			},
-			opt
-		);
-		console.log(consoleLog);
-	} catch (error) {
-		if (error.code == 14) {
-			console.error(error)
-			consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
-					$set: target
-				},
-				opt
-			);
-		}
-		console.log(consoleLog);
-	}
 
-
-
-}
 
 async function cmdfunction(inputStr, groupid, userid, userrole, mainMsg, trigger, botname, displayname, channelid, displaynameDiscord, membercount, result) {
 	let msgSplitor = (/\S+/ig);
@@ -260,6 +226,22 @@ async function cmdfunction(inputStr, groupid, userid, userrole, mainMsg, trigger
 	console.log('inputStr2: ', inputStr);
 }
 
+
+async function logSum(target) {
+	target["RealTimeRollingLogfunction.simpleCourt"] = 1;
+	try {
+		await schema.RealTimeRollingLog.updateOne({}, {
+				$inc: target
+			},
+			opt
+		);
+	} catch (error) {
+		console.error(error)
+	}
+
+
+
+}
 
 //上傳用
 async function saveLog() {
