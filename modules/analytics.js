@@ -145,41 +145,31 @@ async function courtMessage(result, botname, inputStr) {
 			case "Discord":
 				console.log('Discord \'s inputStr: ', inputStr);
 				await logSum({
-					RealTimeRollingLogfunction: {
-						DiscordCountRoll: 1
-					}
+					"RealTimeRollingLogfunction.DiscordCountRoll": 1
 				})
 				break;
 			case "Line":
 				console.log('   Line \'s inputStr: ', inputStr);
 				await logSum({
-					RealTimeRollingLogfunction: {
-						LineCountRoll: 1
-					}
+					"RealTimeRollingLogfunction.LineCountRoll": 1
 				})
 				break;
 			case "Telegram":
 				console.log('Telegram\'s inputStr: ', inputStr);
 				await logSum({
-					RealTimeRollingLogfunction: {
-						TelegramCountRoll: 1
-					}
+					"RealTimeRollingLogfunction.TelegramCountRoll": 1
 				})
 				break;
 			case "Whatsapp":
 				console.log('Whatsapp\'s inputStr: ', inputStr);
 				await logSum({
-					RealTimeRollingLogfunction: {
-						WhatsappCountRoll: 1
-					}
+					"RealTimeRollingLogfunction.WhatsappCountRoll": 1
 				})
 				break;
 			case "www":
 				console.log('     WWW\'s inputStr: ', inputStr);
 				await logSum({
-					RealTimeRollingLogfunction: {
-						WWWCountRoll: 1
-					}
+					"RealTimeRollingLogfunction.WWWCountRoll": 1
 				})
 				break;
 			default:
@@ -188,46 +178,32 @@ async function courtMessage(result, botname, inputStr) {
 		simpleCourt++;
 		//await saveLog();
 
-
-
-
-
 	} else {
 		switch (botname) {
 			case "Discord":
 				await logSum({
-					RealTimeRollingLogfunction: {
-						DiscordCountText: 1
-					}
-				});
+					"RealTimeRollingLogfunction.DiscordCountText": 1
+				})
 				break;
 			case "Line":
 				await logSum({
-					RealTimeRollingLogfunction: {
-						LineCountText: 1
-					}
-				});
+					"RealTimeRollingLogfunction.LineCountText": 1
+				})
 				break;
 			case "Telegram":
 				await logSum({
-					RealTimeRollingLogfunction: {
-						TelegramCountText: 1
-					}
-				});
+					"RealTimeRollingLogfunction.TelegramCountText": 1
+				})
 				break;
 			case "Whatsapp":
 				await logSum({
-					RealTimeRollingLogfunction: {
-						WhatsappCountText: 1
-					}
-				});
+					"RealTimeRollingLogfunction.WhatsappCountText": 1
+				})
 				break;
 			case "WWW":
 				await logSum({
-					RealTimeRollingLogfunction: {
-						WWWCountText: 1
-					}
-				});
+					"RealTimeRollingLogfunction.WWWCountText": 1
+				})
 				break;
 			default:
 				break;
@@ -243,11 +219,27 @@ async function courtMessage(result, botname, inputStr) {
 }
 
 async function logSum(target) {
-	let consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
-		$inc: target,
-		opt
-	});
-	console.log(consoleLog);
+	let consoleLog = {}
+	try {
+		consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
+				$inc: target
+			},
+			opt
+		);
+		console.log(consoleLog);
+	} catch (error) {
+		if (error.code == 14) {
+			console.error(error)
+			consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
+					$set: target
+				},
+				opt
+			);
+		}
+		console.log(consoleLog);
+	}
+
+
 
 }
 
