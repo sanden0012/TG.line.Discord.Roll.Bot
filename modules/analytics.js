@@ -136,30 +136,51 @@ var parseInput = async function (inputStr, groupid, userid, userrole, botname, d
 }
 
 async function courtMessage(result, botname, inputStr) {
-	let doc = await schema.RealTimeRollingLog.findOne(null, opt);
+	let doc = await schema.RealTimeRollingLog.findOne({});
 	console.log('doc:', doc)
+	let target = {};
 	if (result && result.text) {
 		//SAVE THE LOG
 		switch (botname) {
 			case "Discord":
 				console.log('Discord \'s inputStr: ', inputStr);
-				doc.RealTimeRollingLogfunction.DiscordCountRoll++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						DiscordCountRoll: 1
+					}
+				})
 				break;
 			case "Line":
 				console.log('   Line \'s inputStr: ', inputStr);
-				doc.RealTimeRollingLogfunction.LineCountRoll++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						LineCountRoll: 1
+					}
+				})
 				break;
 			case "Telegram":
 				console.log('Telegram\'s inputStr: ', inputStr);
-				doc.RealTimeRollingLogfunction.TelegramCountRoll++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						TelegramCountRoll: 1
+					}
+				})
 				break;
 			case "Whatsapp":
 				console.log('Whatsapp\'s inputStr: ', inputStr);
-				doc.RealTimeRollingLogfunction.WhatsappCountRoll++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						WhatsappCountRoll: 1
+					}
+				})
 				break;
 			case "www":
 				console.log('     WWW\'s inputStr: ', inputStr);
-				doc.RealTimeRollingLogfunction.WhatsappCountRoll++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						WWWCountRoll: 1
+					}
+				})
 				break;
 			default:
 				break;
@@ -174,31 +195,60 @@ async function courtMessage(result, botname, inputStr) {
 	} else {
 		switch (botname) {
 			case "Discord":
-				doc.RealTimeRollingLogfunction.DiscordCountText++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						DiscordCountText: 1
+					}
+				});
 				break;
 			case "Line":
-				doc.RealTimeRollingLogfunction.LineCountText++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						LineCountText: 1
+					}
+				});
 				break;
 			case "Telegram":
-				doc.RealTimeRollingLogfunction.TelegramCountText++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						TelegramCountText: 1
+					}
+				});
 				break;
 			case "Whatsapp":
-				doc.RealTimeRollingLogfunction.WhatsappCountText++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						WhatsappCountText: 1
+					}
+				});
 				break;
 			case "WWW":
-				doc.RealTimeRollingLogfunction.WWWCountText++;
+				await logSum({
+					RealTimeRollingLogfunction: {
+						WWWCountText: 1
+					}
+				});
 				break;
 			default:
 				break;
 		}
-		simpleCourt++;
+		//simpleCourt++;
 
 	}
 
 
-	await doc.save();
+	//await doc.save();
 	//	await saveLog();
 	return null;
+}
+
+async function logSum(target) {
+	let consoleLog = await schema.RealTimeRollingLog.updateOne({}, {
+		$inc: target,
+		opt
+	});
+	console.log(consoleLog);
+
 }
 
 async function cmdfunction(inputStr, groupid, userid, userrole, mainMsg, trigger, botname, displayname, channelid, displaynameDiscord, membercount, result) {
