@@ -10,6 +10,10 @@ const start = async () => {
 	})
 }
 start();
+const opt = {
+	upsert: true
+}
+const schema = require('../modules/core-schema.js');
 const messageTimethenUpload = 50;
 //50次 多少條訊息會上傳一次LOG
 const oneDay = 24 * 60 * 60 * 1000;
@@ -124,7 +128,7 @@ var parseInput = async function (inputStr, groupid, userid, userrole, botname, d
 	}
 
 	//courtMessage + saveLog
-	courtMessage(result, botname, inputStr)
+	await courtMessage(result, botname, inputStr)
 
 	//return result
 	result.CAPTCHA = CAPTCHA;
@@ -132,67 +136,68 @@ var parseInput = async function (inputStr, groupid, userid, userrole, botname, d
 }
 
 async function courtMessage(result, botname, inputStr) {
+	let doc = await schema.RealTimeRollingLog.findOne(null, opt);
+	console.log('doc:', doc)
 	if (result && result.text) {
 		//SAVE THE LOG
-		if (simpleCourt != null) {
-			switch (botname) {
-				case "Discord":
-					console.log('Discord \'s inputStr: ', inputStr);
-					RollingLog.RealTimeRollingLogfunction.DiscordCountRoll++;
-					break;
-				case "Line":
-					console.log('   Line \'s inputStr: ', inputStr);
-					RollingLog.RealTimeRollingLogfunction.LineCountRoll++;
-					break;
-				case "Telegram":
-					console.log('Telegram\'s inputStr: ', inputStr);
-					RollingLog.RealTimeRollingLogfunction.TelegramCountRoll++;
-					break;
-				case "Whatsapp":
-					console.log('Whatsapp\'s inputStr: ', inputStr);
-					RollingLog.RealTimeRollingLogfunction.WhatsappCountRoll++;
-					break;
-				case "www":
-					console.log('     WWW\'s inputStr: ', inputStr);
-					RollingLog.RealTimeRollingLogfunction.WhatsappCountRoll++;
-					break;
-				default:
-					break;
-			}
-			simpleCourt++;
-			//await saveLog();
+		switch (botname) {
+			case "Discord":
+				console.log('Discord \'s inputStr: ', inputStr);
+				doc.RealTimeRollingLogfunction.DiscordCountRoll++;
+				break;
+			case "Line":
+				console.log('   Line \'s inputStr: ', inputStr);
+				doc.RealTimeRollingLogfunction.LineCountRoll++;
+				break;
+			case "Telegram":
+				console.log('Telegram\'s inputStr: ', inputStr);
+				doc.RealTimeRollingLogfunction.TelegramCountRoll++;
+				break;
+			case "Whatsapp":
+				console.log('Whatsapp\'s inputStr: ', inputStr);
+				doc.RealTimeRollingLogfunction.WhatsappCountRoll++;
+				break;
+			case "www":
+				console.log('     WWW\'s inputStr: ', inputStr);
+				doc.RealTimeRollingLogfunction.WhatsappCountRoll++;
+				break;
+			default:
+				break;
 		}
+		simpleCourt++;
+		//await saveLog();
 
 
 
-		return result;
+
+
 	} else {
-		if (simpleCourt != null) {
-			switch (botname) {
-				case "Discord":
-					RollingLog.RealTimeRollingLogfunction.DiscordCountText++;
-					break;
-				case "Line":
-					RollingLog.RealTimeRollingLogfunction.LineCountText++;
-					break;
-				case "Telegram":
-					RollingLog.RealTimeRollingLogfunction.TelegramCountText++;
-					break;
-				case "Whatsapp":
-					RollingLog.RealTimeRollingLogfunction.WhatsappCountText++;
-					break;
-				case "WWW":
-					RollingLog.RealTimeRollingLogfunction.WWWCountText++;
-					break;
-				default:
-					break;
-			}
-			simpleCourt++;
-
+		switch (botname) {
+			case "Discord":
+				doc.RealTimeRollingLogfunction.DiscordCountText++;
+				break;
+			case "Line":
+				doc.RealTimeRollingLogfunction.LineCountText++;
+				break;
+			case "Telegram":
+				doc.RealTimeRollingLogfunction.TelegramCountText++;
+				break;
+			case "Whatsapp":
+				doc.RealTimeRollingLogfunction.WhatsappCountText++;
+				break;
+			case "WWW":
+				doc.RealTimeRollingLogfunction.WWWCountText++;
+				break;
+			default:
+				break;
 		}
+		simpleCourt++;
 
 	}
-	await saveLog();
+
+
+	await doc.save();
+	//	await saveLog();
 	return null;
 }
 

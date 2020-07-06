@@ -125,7 +125,8 @@ if (process.env.mongoURL) {
             WWWCountRoll: Number,
             WWWCountText: Number,
             WhatsappCountRoll: Number,
-            WhatsappCountText: Number
+            WhatsappCountText: Number,
+            simpleCourt: Number
         }
     });
 
