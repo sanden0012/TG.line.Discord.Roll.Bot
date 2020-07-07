@@ -20,46 +20,8 @@ const oneDay = 24 * 60 * 60 * 1000;
 //一日 多久會上傳一次LOG紀錄
 const oneMinuts = 60000;
 //60000 多久可以升級及增加經驗
-const RollingLog = {
-	RealTimeRollingLogfunction: {
-		LastTimeLog: "",
-		StartTime: "",
-		LogTime: "",
-		DiscordCountRoll: 0,
-		DiscordCountText: 0,
-		LineCountRoll: 0,
-		LineCountText: 0,
-		TelegramCountRoll: 0,
-		TelegramCountText: 0,
-		WWWCountRoll: 0,
-		WWWCountText: 0,
-		WhatsappCountRoll: 0,
-		WhatsappCountText: 0
-	}
-};
 const records = require('../modules/records.js');
-var simpleCourt = null;
-records.get('RealTimeRollingLog', (msgs) => {
-	if (msgs && msgs[0] && msgs[0].RealTimeRollingLogfunction)
-		RollingLog.RealTimeRollingLogfunction = {
-			LastTimeLog: msgs[0].RealTimeRollingLogfunction.LastTimeLog || "",
-			StartTime: msgs[0].RealTimeRollingLogfunction.StartTime || "",
-			LogTime: msgs[0].RealTimeRollingLogfunction.LogTime || "",
-			DiscordCountRoll: msgs[0].RealTimeRollingLogfunction.DiscordCountRoll || 0,
-			DiscordCountText: msgs[0].RealTimeRollingLogfunction.DiscordCountText || 0,
-			LineCountRoll: msgs[0].RealTimeRollingLogfunction.LineCountRoll || 0,
-			LineCountText: msgs[0].RealTimeRollingLogfunction.LineCountText || 0,
-			TelegramCountRoll: msgs[0].RealTimeRollingLogfunction.TelegramCountRoll || 0,
-			TelegramCountText: msgs[0].RealTimeRollingLogfunction.TelegramCountText || 0,
-			WWWCountRoll: msgs[0].RealTimeRollingLogfunction.WWWCountRoll || 0,
-			WWWCountText: msgs[0].RealTimeRollingLogfunction.WWWCountText || 0,
-			WhatsappCountRoll: msgs[0].RealTimeRollingLogfunction.WhatsappCountRoll || 0,
-			WhatsappCountText: msgs[0].RealTimeRollingLogfunction.WhatsappCountText || 0
-
-		};
-	//console.log('RollingLog', RollingLog)
-	simpleCourt = 0;
-})
+var simpleCourt = 0;
 const msgSplitor = (/\S+/ig);
 
 //Log everyday 01:00
@@ -231,7 +193,16 @@ async function logSum(target) {
 	target["RealTimeRollingLogfunction.simpleCourt"] = 1;
 	try {
 		await schema.RealTimeRollingLog.updateOne({}, {
-				$inc: target
+				$inc: target,
+				$setOnInsert: {
+					"RealTimeRollingLogfunction.StartTime": Date(Date.now()).toLocaleString("en-US", {
+						timeZone: "Asia/HongKong"
+					})
+				},
+				$max: {
+					dateExpired: new Date()
+				}
+
 			},
 			opt
 		);
