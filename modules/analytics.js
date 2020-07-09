@@ -23,8 +23,21 @@ const oneMinuts = 60000;
 const records = require('../modules/records.js');
 var simpleCourt = 0;
 const msgSplitor = (/\S+/ig);
-
+var lastTimeLog = null;
 //Log everyday 01:00
+const countTime = {
+	"RealTimeRollingLogfunction.DiscordCountRoll": 0,
+	"RealTimeRollingLogfunction.LineCountRoll": 0,
+	"RealTimeRollingLogfunction.TelegramCountRoll": 0,
+	"RealTimeRollingLogfunction.WhatsappCountRoll": 0,
+	"RealTimeRollingLogfunction.WWWCountRoll": 0,
+	"RealTimeRollingLogfunction.DiscordCountText": 0,
+	"RealTimeRollingLogfunction.LineCountText": 0,
+	"RealTimeRollingLogfunction.TelegramCountText": 0,
+	"RealTimeRollingLogfunction.WhatsappCountText": 0,
+	"RealTimeRollingLogfunction.WWWCountText": 0
+}
+
 
 let result = {
 	text: '',
@@ -103,33 +116,26 @@ async function courtMessage(result, botname, inputStr) {
 		switch (botname) {
 			case "Discord":
 				console.log('Discord \'s inputStr: ', inputStr);
-				await logSum({
-					"RealTimeRollingLogfunction.DiscordCountRoll": 1
-				})
+				countTime["RealTimeRollingLogfunction.DiscordCountRoll"]++
 				break;
 			case "Line":
 				console.log('   Line \'s inputStr: ', inputStr);
-				await logSum({
-					"RealTimeRollingLogfunction.LineCountRoll": 1
-				})
+				countTime["RealTimeRollingLogfunction.LineCountRoll"]++
 				break;
 			case "Telegram":
 				console.log('Telegram\'s inputStr: ', inputStr);
-				await logSum({
-					"RealTimeRollingLogfunction.TelegramCountRoll": 1
-				})
+				countTime["RealTimeRollingLogfunction.TelegramCountRoll"]++
+
 				break;
 			case "Whatsapp":
 				console.log('Whatsapp\'s inputStr: ', inputStr);
-				await logSum({
-					"RealTimeRollingLogfunction.WhatsappCountRoll": 1
-				})
+				countTime["RealTimeRollingLogfunction.WhatsappCountRoll"]++
+
 				break;
 			case "www":
 				console.log('     WWW\'s inputStr: ', inputStr);
-				await logSum({
-					"RealTimeRollingLogfunction.WWWCountRoll": 1
-				})
+				countTime["RealTimeRollingLogfunction.WWWCountRoll"]++
+
 				break;
 			default:
 				break;
@@ -138,34 +144,30 @@ async function courtMessage(result, botname, inputStr) {
 	} else {
 		switch (botname) {
 			case "Discord":
-				await logSum({
-					"RealTimeRollingLogfunction.DiscordCountText": 1
-				})
+				countTime["RealTimeRollingLogfunction.DiscordCountText"]++
+
 				break;
 			case "Line":
-				await logSum({
-					"RealTimeRollingLogfunction.LineCountText": 1
-				})
+				countTime["RealTimeRollingLogfunction.LineCountText"]++
+
 				break;
 			case "Telegram":
-				await logSum({
-					"RealTimeRollingLogfunction.TelegramCountText": 1
-				})
+				countTime["RealTimeRollingLogfunction.TelegramCountText"]++
+
 				break;
 			case "Whatsapp":
-				await logSum({
-					"RealTimeRollingLogfunction.WhatsappCountText": 1
-				})
+				countTime["RealTimeRollingLogfunction.WhatsappCountText"]++
+
 				break;
 			case "WWW":
-				await logSum({
-					"RealTimeRollingLogfunction.WWWCountText": 1
-				})
+				countTime["RealTimeRollingLogfunction.WWWCountText"]++
+
 				break;
 			default:
 				break;
 		}
 	}
+	await logSum()
 	return null;
 }
 
@@ -189,32 +191,105 @@ async function cmdfunction(inputStr, groupid, userid, userrole, mainMsg, trigger
 }
 
 
-async function logSum(target) {
-	target["RealTimeRollingLogfunction.simpleCourt"] = 1;
-	try {
-		await schema.RealTimeRollingLog.updateOne({}, {
-				$inc: target,
-				$setOnInsert: {
-					"RealTimeRollingLogfunction.StartTime": Date(Date.now()).toLocaleString("en-US", {
-						timeZone: "Asia/HongKong"
-					})
+async function logSum() {
+	simpleCourt++;
+	if (simpleCourt % 50) {
+		try {
+			await schema.RealTimeRollingLog.updateOne({}, {
+					$inc: countTime,
+					$setOnInsert: {
+						"RealTimeRollingLogfunction.StartTime": Date(Date.now()).toLocaleString("en-US", {
+							timeZone: "Asia/HongKong"
+						})
+					},
+					$set: {
+						"RealTimeRollingLogfunction.LogTime": Date(Date.now()).toLocaleString("en-US", {
+							timeZone: "Asia/HongKong"
+						})
+					}
 				},
-				$max: {
-					dateExpired: new Date()
-				}
+				opt
+			);
+			console.log('save')
+			await reset();
 
-			},
-			opt
-		);
-	} catch (error) {
-		console.error(error)
+
+		} catch (error) {
+			console.error(error);
+			await reset();
+
+		}
 	}
+	if (!lastTimeLog) {
+		let v = null;
+		try {
+			v = await schema.RealTimeRollingLog.findOne({})
+		} catch (error) {
 
+		}
+		console.log(v);
+		if (v && v.RealTimeRollingLogfunction.LastTimeLog) {
+			lastTimeLog = v.LastTimeLog
+			var updateOne = new schema.RollingLog({
+				"RollingLogfunction.LogTime": v.RealTimeRollingLogfunction.LogTime,
+				"RollingLogfunction.DiscordCountRoll": v.RealTimeRollingLogfunction.DiscordCountRoll,
+				"RollingLogfunction.DiscordCountText": v.RealTimeRollingLogfunction.DiscordCountText,
+				"RollingLogfunction.LineCountRoll": v.RealTimeRollingLogfunction.LineCountRoll,
+				"RollingLogfunction.LineCountText": v.RealTimeRollingLogfunction.LineCountText,
+				"RollingLogfunction.TelegramCountRoll": v.RealTimeRollingLogfunction.TelegramCountRoll,
+				"RollingLogfunction.TelegramCountText": v.RealTimeRollingLogfunction.TelegramCountText,
+				"RollingLogfunction.WWWCountRoll": v.RealTimeRollingLogfunction.WWWCountRoll,
+				"RollingLogfunction.WWWCountText": v.RealTimeRollingLogfunction.WWWCountText,
+				"RollingLogfunction.WhatsappCountRoll": v.RealTimeRollingLogfunction.WhatsappCountRoll,
+				"RollingLogfunction.WhatsappCountText": v.RealTimeRollingLogfunction.WhatsappCountText
+			});
+			try {
+				updateOne.save();
+			} catch (error) {
+				console.error(error);
+			}
+		} else {
+			lastTimeLog = new Date();
+			var updateOne = new schema.RollingLog({
+				"RollingLogfunction.LogTime": v.RealTimeRollingLogfunction.LogTime,
+				"RollingLogfunction.DiscordCountRoll": v.RealTimeRollingLogfunction.DiscordCountRoll,
+				"RollingLogfunction.DiscordCountText": v.RealTimeRollingLogfunction.DiscordCountText,
+				"RollingLogfunction.LineCountRoll": v.RealTimeRollingLogfunction.LineCountRoll,
+				"RollingLogfunction.LineCountText": v.RealTimeRollingLogfunction.LineCountText,
+				"RollingLogfunction.TelegramCountRoll": v.RealTimeRollingLogfunction.TelegramCountRoll,
+				"RollingLogfunction.TelegramCountText": v.RealTimeRollingLogfunction.TelegramCountText,
+				"RollingLogfunction.WWWCountRoll": v.RealTimeRollingLogfunction.WWWCountRoll,
+				"RollingLogfunction.WWWCountText": v.RealTimeRollingLogfunction.WWWCountText,
+				"RollingLogfunction.WhatsappCountRoll": v.RealTimeRollingLogfunction.WhatsappCountRoll,
+				"RollingLogfunction.WhatsappCountText": v.RealTimeRollingLogfunction.WhatsappCountText
+			});
+			try {
+				updateOne.save();
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+	}
 
 
 }
 
 //上傳用
+
+async function reset() {
+	countTime["RealTimeRollingLogfunction.DiscordCountRoll"] = 0;
+	countTime["RealTimeRollingLogfunction.LineCountRoll"] = 0;
+	countTime["RealTimeRollingLogfunction.TelegramCountRoll"] = 0;
+	countTime["RealTimeRollingLogfunction.WhatsappCountRoll"] = 0;
+	countTime["RealTimeRollingLogfunction.WWWCountRoll"] = 0;
+	countTime["RealTimeRollingLogfunction.DiscordCountText"] = 0;
+	countTime["RealTimeRollingLogfunction.LineCountText"] = 0;
+	countTime["RealTimeRollingLogfunction.TelegramCountText"] = 0;
+	countTime["RealTimeRollingLogfunction.WhatsappCountText"] = 0;
+	countTime["RealTimeRollingLogfunction.WWWCountText"] = 0;
+	return null;
+}
 async function saveLog() {
 	//假如沒有StartTime 或過了一天則上載中途紀錄到MLAB
 	//console.log(Date.now() - RollingLog.RealTimeRollingLogfunction.StartTime)

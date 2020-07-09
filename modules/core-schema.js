@@ -113,8 +113,9 @@ if (process.env.mongoURL) {
         RealTimeRollingLogfunction: {
             //第一次運行紀錄RollingLogfunction的時間
             StartTime: String,
+            //最後一次傳送到RollingLog 紀錄
             LastTimeLog: Date,
-            //現在時間
+            //現在紀錄時間
             LogTime: String,
             DiscordCountRoll: Number,
             DiscordCountText: Number,
