@@ -104,7 +104,6 @@ var parseInput = async function (inputStr, groupid, userid, userrole, botname, d
 
 	//courtMessage + saveLog
 	await courtMessage(result, botname, inputStr)
-
 	//return result
 	result.CAPTCHA = CAPTCHA;
 	return result;
@@ -125,17 +124,14 @@ async function courtMessage(result, botname, inputStr) {
 			case "Telegram":
 				console.log('Telegram\'s inputStr: ', inputStr);
 				countTime["RealTimeRollingLogfunction.TelegramCountRoll"]++
-
 				break;
 			case "Whatsapp":
 				console.log('Whatsapp\'s inputStr: ', inputStr);
 				countTime["RealTimeRollingLogfunction.WhatsappCountRoll"]++
-
 				break;
 			case "www":
 				console.log('     WWW\'s inputStr: ', inputStr);
 				countTime["RealTimeRollingLogfunction.WWWCountRoll"]++
-
 				break;
 			default:
 				break;
@@ -145,23 +141,18 @@ async function courtMessage(result, botname, inputStr) {
 		switch (botname) {
 			case "Discord":
 				countTime["RealTimeRollingLogfunction.DiscordCountText"]++
-
 				break;
 			case "Line":
 				countTime["RealTimeRollingLogfunction.LineCountText"]++
-
 				break;
 			case "Telegram":
 				countTime["RealTimeRollingLogfunction.TelegramCountText"]++
-
 				break;
 			case "Whatsapp":
 				countTime["RealTimeRollingLogfunction.WhatsappCountText"]++
-
 				break;
 			case "WWW":
 				countTime["RealTimeRollingLogfunction.WWWCountText"]++
-
 				break;
 			default:
 				break;
@@ -188,11 +179,13 @@ async function cmdfunction(inputStr, groupid, userid, userrole, mainMsg, trigger
 		return tempResut;
 	}
 	console.log('inputStr2: ', inputStr);
+	return null;
 }
 
 
 async function logSum() {
 	simpleCourt++;
+	//50次才
 	if (simpleCourt % 50) {
 		try {
 			await schema.RealTimeRollingLog.updateOne({}, {
@@ -211,9 +204,8 @@ async function logSum() {
 				opt
 			);
 			console.log('save')
+			//
 			await reset();
-
-
 		} catch (error) {
 			console.error(error);
 			await reset();
@@ -221,11 +213,22 @@ async function logSum() {
 		}
 	}
 	if (!lastTimeLog) {
+		/**
+		 * 沒有lastTimeLog的話, 立即在RealTime找,
+		 * 有->查看時間, 24小時後可以更新一次,上傳紀錄
+		 * 是24小時後 ->
+		 * 
+		 * 
+		 * 
+		 * 沒有->
+		 * 
+		 * 
+		 */
 		let v = null;
 		try {
 			v = await schema.RealTimeRollingLog.findOne({})
 		} catch (error) {
-
+			console.error(error);
 		}
 		console.log(v);
 		if (v && v.RealTimeRollingLogfunction.LastTimeLog) {
