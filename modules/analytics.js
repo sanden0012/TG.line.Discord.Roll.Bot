@@ -214,13 +214,14 @@ async function logSum() {
 	}
 	if (!lastTimeLog) {
 		/**
-		 * 沒有lastTimeLog的話, 立即在RealTime找,
+		 * 沒有lastTimeLog的話, 立即FIND在RealTime找,
 		 * 有->查看時間, 24小時後可以更新一次,上傳紀錄
-		 * 是24小時後 -> 
+		 * 是24小時後 -> lastTimeLog
+		 * 沒有->停止
 		 * 
 		 * 
 		 * 
-		 * 沒有->
+		 * 沒有-> 立即上傳紀錄並更新lastTimeLog
 		 * 
 		 * 
 		 */
