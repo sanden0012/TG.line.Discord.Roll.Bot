@@ -59,7 +59,7 @@ var rollDiceCommand = async function (inputStr, mainMsg, groupid, userid, userro
 	*/
 
 	//FLAG指令開始於此
-	//		if (trigger.match(/立flag|死亡flag/) != null) return exports.funny.BStyleFlagSCRIPTS();
+	//		if (trigger.match(/要flag|立flag|死亡flag/) != null) return exports.funny.BStyleFlagSCRIPTS();
 
 	//鴨霸獸指令開始於此
 	//		if (trigger.match(/鴨霸獸/) != null) return exports.funny.randomReply();
