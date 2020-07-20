@@ -82,7 +82,7 @@ var rollDiceCommand = async function (inputStr, mainMsg, groupid, userid, userro
 			break;
 		case (/立flag$|^立flag|要flag$|^要flag/i.test(mainMsg[0]) && mainMsg[0].toString().match(/[\s\S]{1,25}/g).length <= 1):
 			return BStyleFlagSCRIPTS();
-		case /^鴨霸獸$/i.test(mainMsg[0]):
+		case /^鴨霸$/i.test(mainMsg[0]):
 			return randomReply();
 		case (/運勢$|^運勢/i.test(mainMsg[0]) && mainMsg[0].toString().match(/[\s\S]{1,40}/g).length <= 1):
 			return randomLuck(mainMsg);
