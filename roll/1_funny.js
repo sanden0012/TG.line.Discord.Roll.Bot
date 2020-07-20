@@ -80,7 +80,7 @@ var rollDiceCommand = async function (inputStr, mainMsg, groupid, userid, userro
 			if (mainMsg[0].match(/^時間塔羅/) != null) return await MultiDrawTarot(mainMsg[1], mainMsg[2], 1);
 			if (mainMsg[0].match(/^大十字塔羅/) != null) return await MultiDrawTarot(mainMsg[1], mainMsg[2], 2);
 			break;
-		case (/立flag$|^立flag/i.test(mainMsg[0]) && mainMsg[0].toString().match(/[\s\S]{1,25}/g).length <= 1):
+		case (/立flag$|^立flag|要flag$|^要flag/i.test(mainMsg[0]) && mainMsg[0].toString().match(/[\s\S]{1,25}/g).length <= 1):
 			return BStyleFlagSCRIPTS();
 		case /^鴨霸獸$/i.test(mainMsg[0]):
 			return randomReply();
